@@ -1,0 +1,5 @@
+Dies ist ein privates Projekt um automatisch die Bachelor-/Masternote 
+für WISO-Studenten der Universität zu Köln zu berechnen.
+
+Notwendige Libraries:
+JSoup, Apache HttpComponents
