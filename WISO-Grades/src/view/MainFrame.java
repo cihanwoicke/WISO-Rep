@@ -265,6 +265,9 @@ public class MainFrame extends JFrame {
 		connector.start(); // loads examList
 	}
 
+	
+	/* --------------------- Inner Classes -----------------------*/
+	
 	/**
 	 * Inner listener-class for mainFrame.
 	 * 

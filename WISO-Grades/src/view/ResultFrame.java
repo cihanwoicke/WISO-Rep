@@ -2,11 +2,14 @@ package view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,19 +24,29 @@ import model.Grade;
 
 public class ResultFrame extends JFrame {
 
+	@SuppressWarnings("unused")
+	private final Color yellowTransp = new Color(255, 255, 0, 63);
+	private final Color greyTransp = new Color(0,0,0,63);
+	private final Color brightGreyTransp = new Color(0,0,0,15);
 	private static final long serialVersionUID = 6264200744924413001L;
 	private WISOGrades app;
 	private JButton close;
 	@SuppressWarnings("unused")
 	private JButton excelButton; // TODO EXCEL-Export
 	private JPanel contentPane;
+	private List<JLabel> averageLabels = new ArrayList<JLabel>();
+	private List<JLabel> areaLabels = new ArrayList<JLabel>();
+	private List<JLabel> examGradeLabels = new ArrayList<JLabel>();
+	private JLabel averageOverallLabel;
 	private Font defaultFont = new Font("default", Font.PLAIN, 11);
+	
 	public ResultFrame(WISOGrades app) {
 		this.app = app;
 		init();
 	}
 	
 	private void init(){
+		setTitle("Notenübersicht (ohne Studium Integrale)");
 		contentPane = new JPanel();
 		setLocationByPlatform(true);
 		setContentPane(contentPane);
@@ -80,7 +93,9 @@ public class ResultFrame extends JFrame {
 			c3.gridy = row;
 			c4.gridy = row;
 			
-			contentPane.add(new JLabel(area.getCompleteName()), c0);
+			JLabel areaLabel = new JLabel(area.getCompleteName()); 
+			contentPane.add(areaLabel, c0);
+			areaLabels.add(areaLabel);
 			
 			row++;
 			
@@ -115,6 +130,7 @@ public class ResultFrame extends JFrame {
 					gradeLabel.setHorizontalAlignment(JLabel.RIGHT);
 					gradeLabel.setFont(defaultFont);
 					contentPane.add(gradeLabel, c4);
+					examGradeLabels.add(gradeLabel);
 					
 					if (exam.getRating().equals(Grade.FIVE)){
 						idLabel.setForeground(Color.RED);
@@ -138,7 +154,8 @@ public class ResultFrame extends JFrame {
 			final JLabel averageLabel = new JLabel("Durchschnitt in " + area.getName() +
 					": " + exams.getAverage(area));
 			contentPane.add(averageLabel, c4);
-
+			averageLabels.add(averageLabel);
+			
 			row++;
 		}
 
@@ -159,8 +176,7 @@ public class ResultFrame extends JFrame {
 		 * All areas are processed
 		 * so show achieved creditpoints:
 		 */
-		JLabel cpLabel = new JLabel("Erreichte CreditPoints: " + exams.getSumCP() +
-				" (von 168)");
+		JLabel cpLabel = new JLabel("Erreichte CreditPoints: " + exams.getSumCP());
 		c3.gridy = row;
 		c3.insets = bottomInset;
 		contentPane.add(cpLabel, c3);
@@ -173,10 +189,10 @@ public class ResultFrame extends JFrame {
 		c4.gridy = row;
 		c4.insets = bottomInset;
 		
-		JLabel averageLabel = new JLabel("Gesamtdurchschnitt: " +
+		averageOverallLabel = new JLabel("Gesamtdurchschnitt: " +
 					": " + averageSingle+ 
 					" (" +averageDouble+ ")");
-			contentPane.add(averageLabel, c4);
+			contentPane.add(averageOverallLabel, c4);
 
 		
 		
@@ -194,5 +210,69 @@ public class ResultFrame extends JFrame {
 		
 		setResizable(false);
 		setVisible(true);
+	}
+	
+	@Override
+	public void paint(Graphics g){
+		super.paint(g);
+		
+		int width = 0;
+		int height;
+		int x; 
+		int y;
+				
+		final int offsetTop = getInsets().top;
+		final int offsetBottom = getInsets().bottom;
+		final int offsetLeft = getInsets().left;
+		@SuppressWarnings("unused")
+		final int offsetRight = getInsets().right;
+		
+//		/* Highlight averages */
+//		g.setColor(yellowTransp);
+//		
+//		// get biggest width of all averageLabels
+//		for (JLabel averageLabel : averageLabels){
+//			width = Math.max(width, averageLabel.getWidth());
+//		}
+//		width += 10; // makes it longer and moves it a bit to the left
+//		x = getWidth() - width - offsetLeft - offsetRight;		
+//		
+//		for (JLabel averageLabel : averageLabels){
+//			y = averageLabel.getY() + offsetTop;
+//			height = averageLabel.getHeight();
+//			g.fillRect(x, y, width, height);
+//		}
+		
+		/* Highlight areas */
+		width = getWidth();
+		x = offsetLeft;
+		g.setColor(greyTransp);
+		for (JLabel areaLabel : areaLabels){
+			y = areaLabel.getY() + offsetTop;
+			height = areaLabel.getHeight();
+			g.fillRect(x, y, width, height);
+		}
+		
+		/* Alternate grey and white for examlist */
+		boolean grey = true;
+		g.setColor(brightGreyTransp);
+		for (JLabel gradeLabel : examGradeLabels){
+			if (grey){
+				gradeLabel.getY();
+				g.fillRect(offsetLeft, offsetTop + gradeLabel.getY(), 
+						getWidth(), gradeLabel.getHeight());
+			}
+			grey = !grey;
+		}
+		
+				
+		/* Make a black bar at bottom*/
+		width = getWidth();
+		height = averageOverallLabel.getHeight();
+		x = offsetLeft;
+		y = getHeight()-(height + offsetTop) + offsetBottom;
+		
+		g.setColor(Color.BLACK);
+		g.fillRect(x, y , width, height/2);
 	}
 }

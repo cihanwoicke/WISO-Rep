@@ -201,7 +201,7 @@ public class HTMLConnector implements Runnable{
 		    // Remove "Studium Integrale"
 		    
 		    for (int i = 0; i < tables.size(); i++){
-		    	if (tables.get(i).text().contains("Integrale")){
+		    	if (tables.get(i).text().contains("Studium Integrale")){
 		    		tables.remove(i);
 		    		headings.remove(i);
 		    	}
@@ -232,8 +232,8 @@ public class HTMLConnector implements Runnable{
 	 * 
 	 * @param gradeTables
 	 *            , requires that:<br />
-	 *            List at position 0 contains headers <br />
-	 *            List at position 1 contains tables.
+	 *            - List at position 0 <i>(i.e. Elements[0])</i> contains headers <br />
+	 *            - List at position 1 <i>(i.e. Elements[1])</i> contains tables.
 	 * 
 	 * @author Cihan Öcal
 	 */
