@@ -58,14 +58,10 @@ public class HTMLConnector implements Runnable{
 	public HTMLConnector(WISOGrades app, String username, String password) {
 		this.app = app;
 		errorhandler = app.getErrorhandler();
-		try {
-			this.userName = URLEncoder.encode(username, "UTF-8");
-			this.password = URLEncoder.encode(password, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			errorhandler.showError
-				("Logindaten konnten nicht in UTF-8 transformiert werden", 2);
-		} 
+		
+		this.userName = username;
+		this.password = password;
+		 
 	}
 	
 	@Override

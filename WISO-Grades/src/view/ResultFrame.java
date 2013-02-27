@@ -106,6 +106,7 @@ public class ResultFrame extends JFrame {
 			c4.gridy = row;
 		
 			for (Exam exam : exams){
+
 				if (exam.getArea().equals(area)){
 					contentPane.add(new JLabel(""));
 					

@@ -53,7 +53,7 @@ public class CompleteExamList extends LinkedList<Exam> {
 
 	public double getAverage(Area area){
 		double sumCP = 0;
-		double sumWeightedGrades = 0l;
+		double sumWeightedGrades = 0;
 		for (Exam exam : getExamsOfArea(area)){
 			Grade grade = exam.getRating();
 			if (grade != Grade.FIVE){
@@ -65,7 +65,8 @@ public class CompleteExamList extends LinkedList<Exam> {
 		}
 	
 		if (sumCP != 0)
-			return (Math.floor((sumWeightedGrades / sumCP) * 10) / 10d );
+			return (Math.floor(
+					Math.round((sumWeightedGrades / sumCP) * 1000)/1000d * 10 ) / 10d );
 		else
 			return 0;
 		
@@ -85,7 +86,8 @@ public class CompleteExamList extends LinkedList<Exam> {
 		}
 				
 		if (sumCP != 0){
-			return (Math.floor((sumWeightedAreaGrades / sumCP) * accuracy) / accuracy);
+			return (Math.floor(
+					Math.round((sumWeightedAreaGrades / sumCP) * 1000)/1000d * accuracy) / accuracy);
 		} else
 			return 0f;
 	}
