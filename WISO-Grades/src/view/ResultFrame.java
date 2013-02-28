@@ -40,13 +40,14 @@ public class ResultFrame extends JFrame {
 	private JLabel averageOverallLabel;
 	private Font defaultFont = new Font("default", Font.PLAIN, 11);
 	
-	public ResultFrame(WISOGrades app) {
+	public ResultFrame(WISOGrades app, String userName) {
 		this.app = app;
+		setTitle("Notenübersicht von " + userName + " " +
+				"(ohne Studium Integrale)");
 		init();
 	}
 	
 	private void init(){
-		setTitle("Notenübersicht (ohne Studium Integrale)");
 		contentPane = new JPanel();
 		setLocationByPlatform(true);
 		setContentPane(contentPane);

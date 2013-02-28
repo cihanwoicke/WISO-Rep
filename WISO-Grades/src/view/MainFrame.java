@@ -35,12 +35,14 @@ public class MainFrame extends JFrame {
 	private final String CMD1 = "loginViaHTTP";
 	private JTextField nameField;
 	private JPasswordField passwordField;
+	private String username = "unbekannt";
+	private String password;
 	private JButton button;
 	private JPanel contentPane;
 	private JPanel upperPanel = new JPanel();
 	private JPanel bigPanel = new JPanel();
 	private JPanel lowerPanel = new JPanel();
-	private JPanel messagePanel; // only shown when fetching data in Progess.
+	private JPanel messagePanel; // only shown when fetching data in progress.
 	private final Color DARKGREEN = new Color(0 << 16 | (100 << 8) | 0 << 0); // R G B
 	private boolean finished = true; // indicator whether data fetching is in progress
 	private JLabel messageLabel;
@@ -79,6 +81,7 @@ public class MainFrame extends JFrame {
 		nameField = new JTextField();
 		nameField.setForeground(DARKGREEN);
 		nameField.setText("dduck");
+		
 		nameField.setColumns(12);
 		nameField.setFont(new Font("default", Font.PLAIN, 11));
 		nameField.addKeyListener((KeyListener) getMyListener());
@@ -120,16 +123,18 @@ public class MainFrame extends JFrame {
 		setVisible(true);
 		setResizable(false);
 		
+		nameField.selectAll();
+		
 	}
 	
-	public void showInputFields(){
+	public void showInputFields() {
 		bigPanel.setVisible(true);
 		lowerPanel.setVisible(true);
 		messagePanel.setVisible(false);
 
 	}
 	
-	private void hideInputFields(){
+	private void hideInputFields() {
 		bigPanel.setVisible(false);
 		lowerPanel.setVisible(false);
 	}
@@ -214,18 +219,18 @@ public class MainFrame extends JFrame {
 	 * @author Cihan Öcal
 	 * <i> 26.02.2013 </i>
 	 */
-	public void setFinished(boolean fin){
-		
+	public void setFinished(boolean fin) {
+
 		finished = fin;
-		
-		if (isFinished()){
+
+		if (isFinished()) {
 			showInputFields();
-			
-			if (app.getExams() != null){
+
+			if (app.getExams() != null) {
 				app.getExams().print();
-				new ResultFrame(app);
-			} 
-			
+				new ResultFrame(app, username);
+			}
+
 		}
 	}
 	
@@ -235,26 +240,26 @@ public class MainFrame extends JFrame {
 	 * @author Cihan Öcal
 	 * <i> 26.02.2013 </i>
 	 */
-	public void resetFields(){
-		
+	public void resetFields() {
 		nameField.setText("");
 		passwordField.setText("");
-
 	}
 
-	public boolean isFinished(){
+	public boolean isFinished() {
 		return finished;
 	}
 
 	/**
-	 * Main method to start grabbing the examresults via HTTP. Once grabbing
+	 * Main method to start grabbing the exam results via HTTP. It also sets 
+	 * fields <i>username</i> and <i>password</i>.
+	 * the Once grabbing
 	 * succeeded, method setFinished(boolean) will be called
 	 * 
 	 * @author Cihan Öcal <i> 25.02.2013 </i>
 	 */
 	public void startHTTPQuery() {
-		String username = nameField.getText();
-		String password = String.valueOf(passwordField.getPassword());
+		username = nameField.getText();
+		password = String.valueOf(passwordField.getPassword());
 		
 		showProgressMessage();
 		
