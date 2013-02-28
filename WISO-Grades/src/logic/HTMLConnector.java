@@ -6,7 +6,6 @@ package logic;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -88,7 +87,6 @@ public class HTMLConnector implements Runnable{
 		
 		} else{
 			app.setExamList(null);
-			app.getMainWindow().resetFields();
 		}
 
 		app.getMainWindow().setFinished(true);
@@ -102,12 +100,7 @@ public class HTMLConnector implements Runnable{
 	 */
 	private boolean login() {
 		
-		sessionID = null;
-		try {
-			sessionID = URLEncoder.encode("invalid Session ID", "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
+		sessionID = "invalid Session ID";
 		
 		final String 	PARAM1KEY = "benutzername", 
 						PARAM2KEY = "passwort",
@@ -136,6 +129,7 @@ public class HTMLConnector implements Runnable{
 		    if (phpSessID == null){
 		    	errorhandler.showError("Fehler: Konnte SessionID nicht auslesen! " +
 		    			"Bitte geben Sie ihre Daten erneut ein...");
+		    	app.getMainWindow().resetFields();
 		    	return false;
 		    }
 		    
@@ -147,7 +141,6 @@ public class HTMLConnector implements Runnable{
 		    
 		} catch (IOException e) {
 			errorhandler.showError("Verbindung zum WISO-Server kann nicht hergestellt werden!");
-			e.printStackTrace();
 			return false;
 			
 		} finally {
