@@ -34,9 +34,13 @@ public class ResultFrame extends JFrame {
 	@SuppressWarnings("unused")
 	private JButton excelButton; // TODO EXCEL-Export
 	private JPanel contentPane;
+	
+	/* following lists are only needed for ui-colors of rects etc. */
 	private List<JLabel> averageLabels = new ArrayList<JLabel>();
 	private List<JLabel> areaLabels = new ArrayList<JLabel>();
 	private List<JLabel> examGradeLabels = new ArrayList<JLabel>();
+	private List<JLabel> firstExamLabelsOfArea = new ArrayList<JLabel>();
+	
 	private JLabel averageOverallLabel;
 	private Font defaultFont = new Font("default", Font.PLAIN, 11);
 	
@@ -106,9 +110,16 @@ public class ResultFrame extends JFrame {
 			c3.gridy = row;
 			c4.gridy = row;
 		
+			/**
+			 * Integer to determine whether current exam is the
+			 * first in its area to draw first line grey. 
+			 */
+			int posOfExamInArea = -1;  
+			
 			for (Exam exam : exams){
 
 				if (exam.getArea().equals(area)){
+					
 					contentPane.add(new JLabel(""));
 					
 					JLabel idLabel = new JLabel(String.valueOf(exam.getId()));
@@ -133,6 +144,11 @@ public class ResultFrame extends JFrame {
 					gradeLabel.setFont(defaultFont);
 					contentPane.add(gradeLabel, c4);
 					examGradeLabels.add(gradeLabel);
+					
+					if (++posOfExamInArea == 0){
+						firstExamLabelsOfArea.add(gradeLabel);
+					}
+					
 					
 					if (exam.getRating().equals(Grade.FIVE)){
 						idLabel.setForeground(Color.RED);
@@ -256,9 +272,14 @@ public class ResultFrame extends JFrame {
 		}
 		
 		/* Alternate grey and white for examlist */
-		boolean grey = true;
+		boolean firstLineGray = true;
+		boolean grey = firstLineGray;
 		g.setColor(brightGreyTransp);
+		
 		for (JLabel gradeLabel : examGradeLabels){
+			if (firstExamLabelsOfArea.contains(gradeLabel)){
+				grey = firstLineGray ;
+			}
 			if (grey){
 				gradeLabel.getY();
 				g.fillRect(offsetLeft, offsetTop + gradeLabel.getY(), 
