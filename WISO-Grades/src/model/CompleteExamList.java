@@ -45,7 +45,7 @@ public class CompleteExamList extends LinkedList<Exam> {
 					System.out.println("              " +
 							exam.getId() + " " + exam.getName() + " " +
 							exam.getCreditpoints() + "CP; Note: " + 
-							exam.getRating().getNumericValue());
+							exam.getRating().toString());
 				}
 			}
 		}

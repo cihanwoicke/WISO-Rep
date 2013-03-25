@@ -24,4 +24,15 @@ public enum Grade {
 		System.err.println("Note ungültig nach Prüfungsordnung WISO '2013");
 		return FIVE;
 	}
+	
+	@Override
+	public String toString(){
+		
+		if(!this.equals(Grade.NaN)){
+			return String.valueOf(numericValue);
+		}
+		else{
+			return "Bestanden";
+		}
+	}
 }

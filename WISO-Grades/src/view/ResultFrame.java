@@ -138,13 +138,8 @@ public class ResultFrame extends JFrame {
 					contentPane.add(cpLabel, c3);
 					
 					JLabel gradeLabel = new JLabel();
-					if (exam.getRating() == Grade.NaN){
-						gradeLabel.setText("Bestanden");
-					}
-					else{
-						gradeLabel.setText(String.valueOf(
-							Math.round(exam.getRating().getNumericValue() * 10f) / 10f));
-					}
+					gradeLabel.setText(exam.getRating().toString());
+					
 					
 					gradeLabel.setHorizontalAlignment(JLabel.RIGHT);
 					gradeLabel.setFont(defaultFont);
