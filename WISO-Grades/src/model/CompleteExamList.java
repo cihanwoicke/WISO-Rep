@@ -52,6 +52,11 @@ public class CompleteExamList extends LinkedList<Exam> {
 	}
 
 	public double getAverage(Area area){
+		
+		if (area.getName().equalsIgnoreCase("Studium Integrale")){
+			return 0;
+		}
+		
 		double sumCP = 0;
 		double sumWeightedGrades = 0;
 		for (Exam exam : getExamsOfArea(area)){
@@ -80,6 +85,13 @@ public class CompleteExamList extends LinkedList<Exam> {
 		double sumWeightedAreaGrades = 0d;
 		
 		for (Area area : getAllAreas()){
+			
+			/* Studium Integrale does not affect Overall Average */
+			if (area.getName().equalsIgnoreCase("Studium Integrale")){
+				continue;
+			}
+			
+			// else
 			cp = getCpOfArea(area); 
 			sumWeightedAreaGrades += (getAverage(area) * cp);
 			sumCP += cp;

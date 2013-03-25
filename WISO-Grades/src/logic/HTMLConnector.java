@@ -187,14 +187,16 @@ public class HTMLConnector implements Runnable{
 		    // ADD HEADINGS
 		    headings = doc.select("h3");
 	
-		    // Remove "Studium Integrale"
-		    
-		    for (int i = 0; i < tables.size(); i++){
-		    	if (tables.get(i).text().contains("Studium Integrale")){
-		    		tables.remove(i);
-		    		headings.remove(i);
-		    	}
-		    }
+		    /* DE-COMMENT FOLLOWING LINES TO REMOVE STUDIUM INTEGRALE */
+//		    // Remove "Studium Integrale"
+//		    
+//		    for (int i = 0; i < tables.size(); i++){
+//		    	if (tables.get(i).text().contains("Studium Integrale")){
+//		    		tables.remove(i);
+//		    		headings.remove(i);
+//		    	}
+//		    }
+		    /* DECOMMENT UNTIL HERE */
 	
 		    
 		    result = new Elements[]{headings, tables};
@@ -287,15 +289,15 @@ public class HTMLConnector implements Runnable{
 				 */
 				Element gradeOnSite = tableDataList.get(j + 3);
 				String gradeString = gradeOnSite.text();
-				Grade grade = Grade.FIVE;
+				Grade grade = Grade.NaN;
 				try{
 					float parsedGrade = Float.parseFloat(gradeString.replace(',', '.'));
 					grade = Grade.getGradeByNumericValue(parsedGrade);
 					
 				} catch (NumberFormatException e){
-					e.printStackTrace();
-					errorhandler.showError("Es gibt ein Problem beim Auslesen der Note!");
-					continue;
+					System.out.println(exam.getName() + ": '" + 
+							gradeString + "' ist keine numerische Note.");
+					grade = Grade.NaN;
 				}
 				
 				exam.setRating(grade);

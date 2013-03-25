@@ -4,7 +4,7 @@ public enum Grade {
 	ONE(1), ONE_THREE(1.3f), ONE_SEVEN(1.7f), 
 	TWO(2f), TWO_THREE(2.3f), TWO_SEVEN(2.7f), 
 	THREE(3f), THREE_THREE(3.3f), THREE_SEVEN(3.7f), 
-	FOUR(4f), FIVE(5f);
+	FOUR(4f), FIVE(5f), NaN(-1f);
 	final float numericValue;
 	
 	Grade(float numericValue){

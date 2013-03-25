@@ -46,8 +46,7 @@ public class ResultFrame extends JFrame {
 	
 	public ResultFrame(WISOGrades app, String userName) {
 		this.app = app;
-		setTitle("Notenübersicht von " + userName + " " +
-				"(ohne Studium Integrale)");
+		setTitle("Notenübersicht von " + userName);
 		init();
 	}
 	
@@ -138,8 +137,15 @@ public class ResultFrame extends JFrame {
 					cpLabel.setFont(defaultFont);
 					contentPane.add(cpLabel, c3);
 					
-					JLabel gradeLabel = new JLabel(String.valueOf(
+					JLabel gradeLabel = new JLabel();
+					if (exam.getRating() == Grade.NaN){
+						gradeLabel.setText("Bestanden");
+					}
+					else{
+						gradeLabel.setText(String.valueOf(
 							Math.round(exam.getRating().getNumericValue() * 10f) / 10f));
+					}
+					
 					gradeLabel.setHorizontalAlignment(JLabel.RIGHT);
 					gradeLabel.setFont(defaultFont);
 					contentPane.add(gradeLabel, c4);
@@ -167,12 +173,15 @@ public class ResultFrame extends JFrame {
 			}
 			
 			/* All exams of One area are processed
-			 * so show the average grade of area:
+			 * so show the average grade of area 
+			 * (Except for 'Studium Integrale'):
 			 */
-			final JLabel averageLabel = new JLabel("Durchschnitt in " + area.getName() +
-					": " + exams.getAverage(area));
-			contentPane.add(averageLabel, c4);
-			averageLabels.add(averageLabel);
+			if (!area.getName().equalsIgnoreCase("Studium Integrale")){
+					final JLabel averageLabel = new JLabel("Durchschnitt in " + 
+							area.getName() + ": " + exams.getAverage(area));
+				contentPane.add(averageLabel, c4);
+				averageLabels.add(averageLabel);
+				}
 			
 			row++;
 		}
