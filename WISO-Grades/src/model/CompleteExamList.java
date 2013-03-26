@@ -65,7 +65,7 @@ public class CompleteExamList extends LinkedList<Exam> {
 				
 				byte cp = exam.getCreditpoints();
 				sumCP += exam.getCreditpoints();
-				sumWeightedGrades += (cp * grade.numericValue);
+				sumWeightedGrades += (cp * grade.getNumericValue());
 			}
 		}
 	

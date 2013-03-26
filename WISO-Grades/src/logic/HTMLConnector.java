@@ -298,6 +298,7 @@ public class HTMLConnector implements Runnable{
 					System.out.println(exam.getName() + ": '" + 
 							gradeString + "' ist keine numerische Note.");
 					grade = Grade.NaN;
+					grade.setStringValue(gradeString);
 				}
 				
 				exam.setRating(grade);

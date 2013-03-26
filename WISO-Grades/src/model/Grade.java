@@ -5,7 +5,9 @@ public enum Grade {
 	TWO(2f), TWO_THREE(2.3f), TWO_SEVEN(2.7f), 
 	THREE(3f), THREE_THREE(3.3f), THREE_SEVEN(3.7f), 
 	FOUR(4f), FIVE(5f), NaN(-1f);
-	final float numericValue;
+	private final float numericValue;
+	/** if NaN is saved, this field contains the correct value */
+	private String stringValue;
 	
 	Grade(float numericValue){
 		this.numericValue = numericValue;
@@ -25,6 +27,14 @@ public enum Grade {
 		return FIVE;
 	}
 	
+	public void setStringValue(String value){
+		stringValue = value;
+	}
+	
+	public String getStringValue(){
+		return stringValue;
+	}
+	
 	@Override
 	public String toString(){
 		
@@ -32,7 +42,7 @@ public enum Grade {
 			return String.valueOf(numericValue);
 		}
 		else{
-			return "Bestanden";
+			return getStringValue();
 		}
 	}
 }
