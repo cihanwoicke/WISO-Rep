@@ -228,7 +228,7 @@ public class MainFrame extends JFrame {
 
 			if (app.getExams() != null) {
 				app.getExams().print();
-				new ResultFrame(app, username);
+				new ResultFrame(app);
 			}
 
 		}

@@ -21,6 +21,7 @@ import model.Area;
 import model.CompleteExamList;
 import model.Exam;
 import model.Grade;
+import model.Student;
 
 public class ResultFrame extends JFrame {
 
@@ -29,7 +30,10 @@ public class ResultFrame extends JFrame {
 	private final Color greyTransp = new Color(0,0,0,63);
 	private final Color brightGreyTransp = new Color(0,0,0,15);
 	private static final long serialVersionUID = 6264200744924413001L;
+	@SuppressWarnings("unused")
 	private WISOGrades app;
+	private Student student;
+	private CompleteExamList exams;
 	private JButton close;
 	@SuppressWarnings("unused")
 	private JButton excelButton; // TODO EXCEL-Export
@@ -44,9 +48,20 @@ public class ResultFrame extends JFrame {
 	private JLabel averageOverallLabel;
 	private Font defaultFont = new Font("default", Font.PLAIN, 11);
 	
-	public ResultFrame(WISOGrades app, String userName) {
+	/**
+	 * Constructor
+	 * @param app
+	 * @author Cihan
+	 * <i> 26.03.2013 </i>
+	 */
+	public ResultFrame(WISOGrades app) {
 		this.app = app;
-		setTitle("Notenübersicht von " + userName);
+		student = app.getExams().getStudent();
+		exams = app.getExams();
+		
+		String username = student.getUsername();
+		int prNr = student.getPrNr();
+		setTitle("Notenübersicht von " + username + " (" + prNr + ")");
 		init();
 	}
 	
@@ -86,8 +101,6 @@ public class ResultFrame extends JFrame {
 		c4.gridy = row;
 		c4.anchor = GridBagConstraints.LINE_END;
 		c4.insets = spaceRight;
-		
-		CompleteExamList exams = app.getExams();
 		
 		for (Area area : exams.getAllAreas()){
 			

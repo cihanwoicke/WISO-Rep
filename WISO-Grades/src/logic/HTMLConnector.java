@@ -15,6 +15,7 @@ import model.Area;
 import model.CompleteExamList;
 import model.Exam;
 import model.Grade;
+import model.Student;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,6 +29,7 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 /**
@@ -81,13 +83,19 @@ public class HTMLConnector implements Runnable{
 		
 		CompleteExamList exams = null;
 		
-		if (login()){
-			exams = convertGradeTables(getGradeTables());
+		if (login()) {
+			Document doc = parseGradePage();
+			exams = convertGradeTables(getGradeTables(doc));
+			Student student = new Student(userName, getPruefungsNr(doc));
+			exams.setStudent(student);
+
 			app.setExamList(exams);
-		
-		} else{
+
+		} else {
 			app.setExamList(null);
 		}
+		
+		logout();
 
 		app.getMainWindow().setFinished(true);
 	}
@@ -149,35 +157,61 @@ public class HTMLConnector implements Runnable{
 	}
 
 	/**
+	 * 
+	 * @return
+	 * @author Cihan
+	 * <i> 26.03.2013 </i>
+	 */
+	private Document parseGradePage() {
+		final String 
+				PARAM1KEY = "destination", PARAM1VALUE = "notenliste",
+				PARAM2KEY = "PHPSESSID";
+	
+		Document doc = null;
+		
+		try {
+			httpPost = new HttpPost(URLSTRING);
+	
+			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+			nvps.add(new BasicNameValuePair(PARAM1KEY, PARAM1VALUE));
+			nvps.add(new BasicNameValuePair(PARAM2KEY, sessionID));
+	
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+			HttpResponse response = httpclient.execute(httpPost);
+	
+			HttpEntity entity = response.getEntity();
+			String content = EntityUtils.toString(entity);
+	
+			doc = Jsoup.parse(content);
+	
+			EntityUtils.consume(entity);
+	
+		} catch (UnsupportedEncodingException uee) {
+			uee.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			httpPost.releaseConnection();
+		}
+	
+		return doc;
+	}
+
+	/**
 	 * Returns grade-tables sorted by area.
 	 * @return Array, with headers in position 0 and <br />
 	 * tables in position 1
 	 * @author Cihan Öcal
 	 */
-	private Elements[] getGradeTables() {
+	private Elements[] getGradeTables(Document doc) {
 	
-		final String 	PARAM1KEY = "destination", PARAM1VALUE = "notenliste",
-						PARAM2KEY = "PHPSESSID";
-		
-		httpPost = new HttpPost(URLSTRING);
-		
 		Elements tables = null;
 		Elements headings = null;
-		
+
 		Elements[] result = new Elements[2];
-		try{
-			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-			nvps.add(new BasicNameValuePair(PARAM1KEY, PARAM1VALUE));
-			nvps.add(new BasicNameValuePair(PARAM2KEY, sessionID));
-			
-			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
-			HttpResponse response = httpclient.execute(httpPost);
-	
-			HttpEntity entity = response.getEntity();
-		    String content = EntityUtils.toString(entity);
-		    
-		    Document doc = Jsoup.parse(content);
-		    
+  
 		    // ADD TABLES
 		    tables = doc.select("table");
 		    //remove first two tables since they are not relevant
@@ -198,20 +232,8 @@ public class HTMLConnector implements Runnable{
 //		    }
 		    /* DECOMMENT UNTIL HERE */
 	
-		    
 		    result = new Elements[]{headings, tables};
 		    
-		    EntityUtils.consume(entity);
-			
-		} catch(UnsupportedEncodingException uee){
-			uee.printStackTrace();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally{
-			httpPost.releaseConnection();
-		}
 	
 		return result;
 		
@@ -295,8 +317,6 @@ public class HTMLConnector implements Runnable{
 					grade = Grade.getGradeByNumericValue(parsedGrade);
 					
 				} catch (NumberFormatException e){
-					System.out.println(exam.getName() + ": '" + 
-							gradeString + "' ist keine numerische Note.");
 					grade = Grade.NaN;
 					grade.setStringValue(gradeString);
 				}
@@ -334,6 +354,66 @@ public class HTMLConnector implements Runnable{
 		
 	}
 
-	
-	
+	/**
+	 * Reads and returns the Pruefungsnummer of current student from the 
+	 * website
+	 * @param doc
+	 * @return
+	 * @author Cihan
+	 * <i> 26.03.2013 </i>
+	 */
+	private int getPruefungsNr(Document doc) {
+	    
+		Element prNrParagraph = doc.select("form p").first();
+	    Node prNrSentenceNode = prNrParagraph.childNode(0);
+		String prNrSentence = prNrSentenceNode.toString();
+		int beginIndex = prNrSentence.indexOf("(") + 1;
+		int endIndex = prNrSentence.indexOf(")");
+		int prNr = 0;
+		try{
+			prNr = Integer.parseInt(
+					prNrSentence.substring(beginIndex, endIndex));
+		} catch(NumberFormatException ne){
+			errorhandler.showError("Konnte Prüfungsnr: nicht auslesen");
+		}
+		
+		return prNr;
+	}
+
+	/**
+	 * 
+	 * @author Cihan
+	 * <i> 26.03.2013 </i>
+	 */
+	private void logout() {
+		final String 	
+				PARAM1KEY = "destination", PARAM1VALUE = "logout",
+				PARAM2KEY = "PHPSESSID", PARAM2VALUE = sessionID,
+				PARAM3KEY = "abmelden", PARAM3VALUE = "abmelden";
+
+		httpPost = new HttpPost(URLSTRING);
+
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair(PARAM1KEY, PARAM1VALUE));
+		nvps.add(new BasicNameValuePair(PARAM2KEY, PARAM2VALUE));
+		nvps.add(new BasicNameValuePair(PARAM3KEY, PARAM3VALUE));
+
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+			HttpResponse response = httpclient.execute(httpPost);
+
+			HttpEntity entity = response.getEntity();
+
+			/* DE-COMMENT TO SHOW RESPONSE IN SHELL */
+//			String content = EntityUtils.toString(entity);
+//			System.out.println(content);
+			/* DE-COMMENT TILL HERE */
+			
+			EntityUtils.consume(entity);
+		} catch (IOException e) {
+			System.err.println("Konnte nicht ausloggen");
+		} finally {
+			httpPost.releaseConnection();
+		}
+	}	
 }
