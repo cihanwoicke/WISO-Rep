@@ -8,11 +8,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import model.Area;
-import model.CompleteExamList;
+import model.CompleteAreaList;
 import model.Exam;
 import model.Grade;
 import model.Student;
@@ -81,7 +80,7 @@ public class HTMLConnector implements Runnable{
 	 */
 	public void loadExamList(){
 		
-		CompleteExamList exams = null;
+		CompleteAreaList exams = null;
 		
 		if (login()) {
 			Document doc = parseGradePage();
@@ -250,16 +249,15 @@ public class HTMLConnector implements Runnable{
 	 * 
 	 * @author Cihan Öcal
 	 */
-	private CompleteExamList convertGradeTables(Elements[] gradeTables) {
+	private CompleteAreaList convertGradeTables(Elements[] gradeTables) {
 		
 		// First Headers == Areas
-		LinkedList<Area> areas = new LinkedList<Area>();
+		CompleteAreaList allAreas = new CompleteAreaList();
 		for (Element element : gradeTables[0]){
-			areas.add(new Area(element.text()));
+			allAreas.add(new Area(element.text()));
 		}
 		
 		// Now tables(-entries) == exams
-		CompleteExamList exams = new CompleteExamList();
 		
 		for (int i = 0; i < gradeTables[1].size(); i++){
 			Element singleGradeTable = gradeTables[1].get(i);
@@ -280,7 +278,7 @@ public class HTMLConnector implements Runnable{
 						("Es gibt ein Problem beim Auslesen der VeranstaltungsId");
 					continue;
 				}
-				Exam exam = new Exam(areas.get(i), examID);
+				Exam exam = new Exam(examID);
 				
 				/*
 				 * Set examName
@@ -327,14 +325,12 @@ public class HTMLConnector implements Runnable{
 				 * Finished Updating exam-object here
 				 */
 				
-				
-				exams.add(exam);
-				
+				allAreas.get(i).addExam(exam);
 			}
 			
 		}
 		
-		Collections.sort(exams);
+		Collections.sort(allAreas);
 		
 //		for (Area ar : areas){
 //			System.out.println(ar.getName());
@@ -348,9 +344,7 @@ public class HTMLConnector implements Runnable{
 //		
 //		}
 		
-		return exams;
-		
-
+		return allAreas;
 		
 	}
 
@@ -411,7 +405,7 @@ public class HTMLConnector implements Runnable{
 			
 			EntityUtils.consume(entity);
 		} catch (IOException e) {
-			System.err.println("Konnte nicht ausloggen");
+			System.err.println("Konnte nicht ausloggen!");
 		} finally {
 			httpPost.releaseConnection();
 		}

@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 
 import logic.WISOGrades;
 import model.Area;
-import model.CompleteExamList;
+import model.CompleteAreaList;
 import model.Exam;
 import model.Grade;
 import model.Student;
@@ -33,7 +33,7 @@ public class ResultFrame extends JFrame {
 	@SuppressWarnings("unused")
 	private WISOGrades app;
 	private Student student;
-	private CompleteExamList exams;
+	private CompleteAreaList allAreas;
 	private JButton close;
 	@SuppressWarnings("unused")
 	private JButton excelButton; // TODO EXCEL-Export
@@ -57,7 +57,7 @@ public class ResultFrame extends JFrame {
 	public ResultFrame(WISOGrades app) {
 		this.app = app;
 		student = app.getExams().getStudent();
-		exams = app.getExams();
+		allAreas = app.getExams();
 		
 		String username = student.getUsername();
 		int prNr = student.getPrNr();
@@ -102,7 +102,7 @@ public class ResultFrame extends JFrame {
 		c4.anchor = GridBagConstraints.LINE_END;
 		c4.insets = spaceRight;
 		
-		for (Area area : exams.getAllAreas()){
+		for (Area area : allAreas){
 			
 			c0.gridy = row;
 			c1.gridy = row;
@@ -128,56 +128,54 @@ public class ResultFrame extends JFrame {
 			 */
 			int posOfExamInArea = -1;  
 			
-			for (Exam exam : exams){
-
-				if (exam.getArea().equals(area)){
-					
-					contentPane.add(new JLabel(""));
-					
-					JLabel idLabel = new JLabel(String.valueOf(exam.getId()));
-					idLabel.setHorizontalAlignment(JLabel.RIGHT);
-					idLabel.setFont(defaultFont);
-					contentPane.add(idLabel, c1);
-					
-					JLabel nameLabel = new JLabel(exam.getName());
-					nameLabel.setHorizontalAlignment(JLabel.RIGHT);
-					nameLabel.setFont(defaultFont);
-					contentPane.add(nameLabel, c2);
-					
-					JLabel cpLabel = new JLabel(String.valueOf(exam.getCreditpoints())
-										.concat(" CP"));
-					cpLabel.setHorizontalAlignment(JLabel.RIGHT);
-					cpLabel.setFont(defaultFont);
-					contentPane.add(cpLabel, c3);
-					
-					JLabel gradeLabel = new JLabel();
-					gradeLabel.setText(exam.getRating().toString());
-					
-					
-					gradeLabel.setHorizontalAlignment(JLabel.RIGHT);
-					gradeLabel.setFont(defaultFont);
-					contentPane.add(gradeLabel, c4);
-					examGradeLabels.add(gradeLabel);
-					
-					if (++posOfExamInArea == 0){
-						firstExamLabelsOfArea.add(gradeLabel);
-					}
-					
-					
-					if (exam.getRating().equals(Grade.FIVE)){
-						idLabel.setForeground(Color.RED);
-						nameLabel.setForeground(Color.RED);
-						cpLabel.setForeground(Color.RED);
-						gradeLabel.setForeground(Color.RED);
-					}
-					
-					row++;
-					c0.gridy = row;
-					c1.gridy = row;
-					c2.gridy = row;
-					c3.gridy = row;
-					c4.gridy = row;
+			for (Exam exam : area.getAllExams()){
+				
+				contentPane.add(new JLabel(""));
+				
+				JLabel idLabel = new JLabel(String.valueOf(exam.getId()));
+				idLabel.setHorizontalAlignment(JLabel.RIGHT);
+				idLabel.setFont(defaultFont);
+				contentPane.add(idLabel, c1);
+				
+				JLabel nameLabel = new JLabel(exam.getName());
+				nameLabel.setHorizontalAlignment(JLabel.RIGHT);
+				nameLabel.setFont(defaultFont);
+				contentPane.add(nameLabel, c2);
+				
+				JLabel cpLabel = new JLabel(String.valueOf(exam.getCreditpoints())
+									.concat(" CP"));
+				cpLabel.setHorizontalAlignment(JLabel.RIGHT);
+				cpLabel.setFont(defaultFont);
+				contentPane.add(cpLabel, c3);
+				
+				JLabel gradeLabel = new JLabel();
+				gradeLabel.setText(exam.getRating().toString());
+				
+				
+				gradeLabel.setHorizontalAlignment(JLabel.RIGHT);
+				gradeLabel.setFont(defaultFont);
+				contentPane.add(gradeLabel, c4);
+				examGradeLabels.add(gradeLabel);
+				
+				if (++posOfExamInArea == 0){
+					firstExamLabelsOfArea.add(gradeLabel);
 				}
+				
+				
+				if (exam.getRating().equals(Grade.FIVE)){
+					idLabel.setForeground(Color.RED);
+					nameLabel.setForeground(Color.RED);
+					cpLabel.setForeground(Color.RED);
+					gradeLabel.setForeground(Color.RED);
+				}
+				
+				row++;
+				c0.gridy = row;
+				c1.gridy = row;
+				c2.gridy = row;
+				c3.gridy = row;
+				c4.gridy = row;
+			
 			}
 			
 			/* All exams of One area are processed
@@ -186,7 +184,7 @@ public class ResultFrame extends JFrame {
 			 */
 			if (!area.getName().equalsIgnoreCase("Studium Integrale")){
 					final JLabel averageLabel = new JLabel("Durchschnitt in " + 
-							area.getName() + ": " + exams.getAverage(area));
+							area.getName() + ": " + allAreas.getAverage(area));
 				contentPane.add(averageLabel, c4);
 				averageLabels.add(averageLabel);
 				}
@@ -200,7 +198,7 @@ public class ResultFrame extends JFrame {
 		 * All areas are processed
 		 * so show sum maluspoints:
 		 */
-		byte malus = exams.getSumMP();
+		byte malus = allAreas.getSumMP();
 		JLabel mpLabel = new JLabel("Maluspunkte: " + malus);
 		mpLabel.setForeground(Color.RED);
 		c1.gridy = row;
@@ -211,7 +209,7 @@ public class ResultFrame extends JFrame {
 		 * All areas are processed
 		 * so show achieved creditpoints:
 		 */
-		JLabel cpLabel = new JLabel("Erreichte CreditPoints: " + exams.getSumCP());
+		JLabel cpLabel = new JLabel("Erreichte CreditPoints: " + allAreas.getSumCP());
 		c3.gridy = row;
 		c3.insets = bottomInset;
 		contentPane.add(cpLabel, c3);
@@ -219,7 +217,7 @@ public class ResultFrame extends JFrame {
 		/* All areas are processed
 		 * so show overall average:
 		 */		
-		double averageDouble = exams.getAverageOverall(true);
+		double averageDouble = allAreas.getAverageOverall(true);
 		double averageSingle = Math.floor(averageDouble * 10) / 10d;
 		c4.gridy = row;
 		c4.insets = bottomInset;

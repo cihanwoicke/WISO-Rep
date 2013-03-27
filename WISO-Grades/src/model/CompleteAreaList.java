@@ -1,57 +1,23 @@
 package model;
 
-import java.util.TreeSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-public class CompleteExamList extends LinkedList<Exam> {
+public class CompleteAreaList extends ArrayList<Area> {
 
 	private static final long serialVersionUID = 6768416802026411605L;
 	private Student student = null; // Student that belongs to these exams
 	
-	public Set<Area> getAllAreas(){
-		Set<Area> allAreas = new TreeSet<Area>();
-		for (Exam exam : this){
-			allAreas.add(exam.getArea());
-		}
-		return allAreas;
-	}
+	
+	/* ------------------- GETTER -------------------*/ 
 	
 	public List<Exam> getExamsOfArea(Area area){
-		List<Exam> examsOfArea = new LinkedList<Exam>();
-	
-		for (Exam exam : this){
-			if (exam.getArea().equals(area)){
-				examsOfArea.add(exam);
-			}
-		}
 		
+		List<Exam> examsOfArea = area.getAllExams();
 		return examsOfArea;
 	}
 	
-	public int getAreaQty(){
-		return getAllAreas().size();
-	}
 	
-	
-	public void print(){
-	
-		Set<Area> allAreas = getAllAreas();
-		
-		for (Area area : allAreas){
-			System.out.println("AREA: " + area.getCompleteName());
-			for (Exam exam : this){
-				if (exam.getArea().equals(area)){
-					System.out.println("              " +
-							exam.getId() + " " + exam.getName() + " " +
-							exam.getCreditpoints() + "CP; Note: " + 
-							exam.getRating().toString());
-				}
-			}
-		}
-	}
-
 	public double getAverage(Area area){
 		
 		if (area.getName().equalsIgnoreCase("Studium Integrale")){
@@ -85,7 +51,7 @@ public class CompleteExamList extends LinkedList<Exam> {
 		int sumCP = 0;
 		double sumWeightedAreaGrades = 0d;
 		
-		for (Area area : getAllAreas()){
+		for (Area area : this){
 			
 			/* Studium Integrale does not affect Overall Average */
 			if (area.getName().equalsIgnoreCase("Studium Integrale")){
@@ -126,9 +92,11 @@ public class CompleteExamList extends LinkedList<Exam> {
 	public short getSumCP(){
 		
 		short sumCP = 0;
-		for (Exam exam : this){
-			if (!exam.getRating().equals(Grade.FIVE)){ 
-				sumCP += exam.getCreditpoints();
+		for (Area area : this){
+			for (Exam exam : area.getAllExams()){
+				if (!exam.getRating().equals(Grade.FIVE)){ 
+					sumCP += exam.getCreditpoints();
+				}
 			}
 		}
 		
@@ -138,14 +106,22 @@ public class CompleteExamList extends LinkedList<Exam> {
 	public byte getSumMP(){
 		
 		byte malP = 0;
-		for (Exam exam : this){
-			if (exam.getRating().equals(Grade.FIVE)){ 
-				malP -= exam.getCreditpoints();
+		for (Area area : this){
+			for (Exam exam : area.getAllExams()){
+				if (exam.getRating().equals(Grade.FIVE)){ 
+					malP -= exam.getCreditpoints();
+				}
 			}
 		}
 		
 		return malP;
 	}
+
+	public Student getStudent(){
+		return student;
+	}
+
+	/* ------------------- SETTER -------------------*/ 
 
 	/**
 	 * @param student
@@ -160,8 +136,19 @@ public class CompleteExamList extends LinkedList<Exam> {
 		}
 		this.student = student;
 	}
+
+
+	public void print(){
 	
-	public Student getStudent(){
-		return student;
+		for (Area area : this){
+			System.out.println("AREA: " + area.getCompleteName());
+			for (Exam exam : area.getAllExams()){
+				System.out.println("              " +
+						exam.getId() + " " + exam.getName() + " " +
+						exam.getCreditpoints() + "CP; Note: " + 
+						exam.getRating().toString());
+			
+			}
+		}
 	}
 }

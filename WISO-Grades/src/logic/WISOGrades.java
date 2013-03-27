@@ -1,12 +1,12 @@
 package logic;
 
-import model.CompleteExamList;
+import model.CompleteAreaList;
 
 import view.MainFrame;
 
 public class WISOGrades {
 
-	private CompleteExamList exams;
+	private CompleteAreaList exams;
 	private MainFrame mainWindow;
 	private Errorhandler errorhandler;
 	
@@ -54,12 +54,12 @@ public class WISOGrades {
 	 * @author Cihan Öcal
 	 * <i> 25.02.2013 </i>
 	 */
-	public CompleteExamList getExams() {
+	public CompleteAreaList getExams() {
 		return exams;
 	}
 
 
-	public void setExamList(CompleteExamList exams) {
+	public void setExamList(CompleteAreaList exams) {
 		this.exams = exams;
 	}
 

@@ -1,9 +1,13 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Area implements Comparable<Area>{
 	private final String name;
 	private int id;
-
+	private List<Exam> exams = new ArrayList<Exam>();
+	
 	public Area(final String name) {
 		int i = 0;
 		while (Character.isDigit(name.charAt(i))){
@@ -52,5 +56,16 @@ public class Area implements Comparable<Area>{
 	public int compareTo(Area targetArea) {
 		return getCompleteName().compareTo(targetArea.getCompleteName());
 	}
+	
+	public void addExam(Exam exam){
+		exams.add(exam);
+	}
 
+	public Exam getExam(int i){
+		return exams.get(i);
+	}
+
+	public List<Exam> getAllExams() {
+		return exams;
+	}
 }
