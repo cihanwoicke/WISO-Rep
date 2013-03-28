@@ -263,6 +263,8 @@ public class HTMLConnector implements Runnable{
 			Element singleGradeTable = gradeTables[1].get(i);
 			Elements tableDataList = singleGradeTable.select("td");
 			
+			Area currentArea = allAreas.get(i);
+			
 			for (int j = 0; j < tableDataList.size() ; j += 4){
 				
 				
@@ -325,9 +327,9 @@ public class HTMLConnector implements Runnable{
 				 * Finished Updating exam-object here
 				 */
 				
-				allAreas.get(i).addExam(exam);
+				currentArea.addExam(exam);
 			}
-			
+			Collections.sort(currentArea.getAllExams());
 		}
 		
 		Collections.sort(allAreas);
