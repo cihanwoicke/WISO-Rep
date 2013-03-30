@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -22,13 +21,10 @@ import model.CompleteAreaList;
 import model.Exam;
 import model.Grade;
 import model.Student;
+import model.WISOColors;
 
 public class ResultFrame extends JFrame {
 
-	@SuppressWarnings("unused")
-	private final Color yellowTransp = new Color(255, 255, 0, 63);
-	private final Color greyTransp = new Color(0,0,0,63);
-	private final Color brightGreyTransp = new Color(0,0,0,15);
 	private static final long serialVersionUID = 6264200744924413001L;
 	@SuppressWarnings("unused")
 	private WISOGrades app;
@@ -163,10 +159,10 @@ public class ResultFrame extends JFrame {
 				
 				
 				if (exam.getRating().equals(Grade.FIVE)){
-					idLabel.setForeground(Color.RED);
-					nameLabel.setForeground(Color.RED);
-					cpLabel.setForeground(Color.RED);
-					gradeLabel.setForeground(Color.RED);
+					idLabel.setForeground(WISOColors.MALUSPOINTSCOLOR);
+					nameLabel.setForeground(WISOColors.MALUSPOINTSCOLOR);
+					cpLabel.setForeground(WISOColors.MALUSPOINTSCOLOR);
+					gradeLabel.setForeground(WISOColors.MALUSPOINTSCOLOR);
 				}
 				
 				row++;
@@ -183,8 +179,9 @@ public class ResultFrame extends JFrame {
 			 * (Except for 'Studium Integrale'):
 			 */
 			if (!area.getName().equalsIgnoreCase("Studium Integrale")){
-					final JLabel averageLabel = new JLabel("Durchschnitt in " + 
-							area.getName() + ": " + allAreas.getAverage(area));
+				final JLabel averageLabel = new JLabel("Durchschnitt in "
+						+ area.getName() + ": " + allAreas.getAverage(area));
+				averageLabel.setForeground(WISOColors.DARKGREENTEXT);
 				contentPane.add(averageLabel, c4);
 				averageLabels.add(averageLabel);
 				}
@@ -200,7 +197,7 @@ public class ResultFrame extends JFrame {
 		 */
 		byte malus = allAreas.getSumMP();
 		JLabel mpLabel = new JLabel("Maluspunkte: " + malus);
-		mpLabel.setForeground(Color.RED);
+		mpLabel.setForeground(WISOColors.MALUSPOINTSCOLOR);
 		c1.gridy = row;
 		c1.insets = bottomInset;
 		contentPane.add(mpLabel, c1);
@@ -236,7 +233,7 @@ public class ResultFrame extends JFrame {
 				dispose();
 			}
 		});
-		contentPane.setBackground(Color.WHITE);
+		contentPane.setBackground(WISOColors.BACKGROUND);
 		
 		
 		pack();
@@ -279,7 +276,7 @@ public class ResultFrame extends JFrame {
 		/* Highlight areas */
 		width = getWidth();
 		x = offsetLeft;
-		g.setColor(greyTransp);
+		g.setColor(WISOColors.AREAHIGHLIGHTINGCOLOR);
 		for (JLabel areaLabel : areaLabels){
 			y = areaLabel.getY() + offsetTop;
 			height = areaLabel.getHeight();
@@ -289,7 +286,7 @@ public class ResultFrame extends JFrame {
 		/* Alternate grey and white for examlist */
 		boolean firstLineGray = true;
 		boolean grey = firstLineGray;
-		g.setColor(brightGreyTransp);
+		g.setColor(WISOColors.ALTERNATINGLINESCOLOR);
 		
 		for (JLabel gradeLabel : examGradeLabels){
 			if (firstExamLabelsOfArea.contains(gradeLabel)){
@@ -310,7 +307,7 @@ public class ResultFrame extends JFrame {
 		x = offsetLeft;
 		y = getHeight()-(height + offsetTop) + offsetBottom;
 		
-		g.setColor(Color.BLACK);
+		g.setColor(WISOColors.AREAHIGHLIGHTINGCOLOR2);
 		g.fillRect(x, y , width, height/2);
 	}
 }

@@ -5,7 +5,6 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -23,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import logic.HTMLConnector;
 import logic.WISOGrades;
+import model.WISOColors;
 
 /**
  * 
@@ -43,7 +43,6 @@ public class MainFrame extends JFrame {
 	private JPanel bigPanel = new JPanel();
 	private JPanel lowerPanel = new JPanel();
 	private JPanel messagePanel; // only shown when fetching data in progress.
-	private final Color DARKGREEN = new Color(0 << 16 | (100 << 8) | 0 << 0); // R G B
 	private boolean finished = true; // indicator whether data fetching is in progress
 	private JLabel messageLabel;
 	private String messageText = "Ihre Anfrage wird bearbeitet";
@@ -63,11 +62,11 @@ public class MainFrame extends JFrame {
 		setContentPane(contentPane);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		contentPane.setLayout(new BorderLayout(10,10));
-		contentPane.setBackground(Color.WHITE);
+		contentPane.setBackground(WISOColors.BACKGROUND);
 		bigPanel.setLayout(new GridLayout(2,2));
-		bigPanel.setBackground(Color.WHITE);
-		upperPanel.setBackground(Color.WHITE);
-		lowerPanel.setBackground(Color.WHITE);
+		bigPanel.setBackground(WISOColors.BACKGROUND);
+		upperPanel.setBackground(WISOColors.BACKGROUND);
+		lowerPanel.setBackground(WISOColors.BACKGROUND);
 		
 		
 		JLabel infoLabel = new JLabel();
@@ -79,7 +78,7 @@ public class MainFrame extends JFrame {
 		nameLabel.setFont(new Font("default", Font.PLAIN, 11));
 		
 		nameField = new JTextField();
-		nameField.setForeground(DARKGREEN);
+		nameField.setForeground(WISOColors.DARKGREENTEXT);
 		nameField.setText("dduck");
 		
 		nameField.setColumns(12);
@@ -92,7 +91,7 @@ public class MainFrame extends JFrame {
 		passwordLabel.setFont(new Font("default", Font.PLAIN, 11));
 		
 		passwordField= new JPasswordField();
-		passwordField.setForeground(DARKGREEN);
+		passwordField.setForeground(WISOColors.DARKGREENTEXT);
 		passwordField.setFont(new Font("default", Font.PLAIN, 11));
 		passwordField.addKeyListener((KeyListener) getMyListener());
 		passwordField.setColumns(14);
@@ -144,7 +143,7 @@ public class MainFrame extends JFrame {
 		if (messagePanel == null){
 			messageLabel = new JLabel(messageText);
 			messagePanel = new JPanel();
-			messagePanel.setBackground(Color.WHITE);
+			messagePanel.setBackground(WISOColors.BACKGROUND);
 			messagePanel.add(messageLabel);
 		}
 		return messagePanel;
