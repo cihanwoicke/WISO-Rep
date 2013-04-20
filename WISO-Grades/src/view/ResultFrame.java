@@ -178,9 +178,9 @@ public class ResultFrame extends JFrame {
 			 * so show the average grade of area 
 			 * (Except for 'Studium Integrale'):
 			 */
-			if (!area.getName().equalsIgnoreCase("Studium Integrale")){
+			if (area.getAverage() != 0){
 				final JLabel averageLabel = new JLabel("Durchschnitt in "
-						+ area.getName() + ": " + allAreas.getAverage(area));
+						+ area.getName() + ": " + area.getAverage());
 				averageLabel.setForeground(WISOColors.DARKGREENTEXT);
 				contentPane.add(averageLabel, c4);
 				averageLabels.add(averageLabel);

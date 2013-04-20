@@ -17,33 +17,6 @@ public class CompleteAreaList extends ArrayList<Area> {
 		return examsOfArea;
 	}
 	
-	
-	public double getAverage(Area area){
-		
-		if (area.getName().equalsIgnoreCase("Studium Integrale")){
-			return 0;
-		}
-		
-		double sumCP = 0;
-		double sumWeightedGrades = 0;
-		for (Exam exam : getExamsOfArea(area)){
-			Grade grade = exam.getRating();
-			if (grade != Grade.FIVE && grade != Grade.NaN){
-				
-				byte cp = exam.getCreditpoints();
-				sumCP += exam.getCreditpoints();
-				sumWeightedGrades += (cp * grade.getNumericValue());
-			}
-		}
-	
-		if (sumCP != 0)
-			return (Math.floor(
-					Math.round((sumWeightedGrades / sumCP) * 1000)/1000d * 10 ) / 10d );
-		else
-			return 0;
-		
-	}
-	
 	public double getAverageOverall(boolean twoFractionalDigits){
 		
 		double accuracy = twoFractionalDigits ? 100 : 10;
@@ -53,14 +26,9 @@ public class CompleteAreaList extends ArrayList<Area> {
 		
 		for (Area area : this){
 			
-			/* Studium Integrale does not affect Overall Average */
-			if (area.getName().equalsIgnoreCase("Studium Integrale")){
-				continue;
-			}
-			
 			// else
 			cp = getCpOfArea(area); 
-			sumWeightedAreaGrades += (getAverage(area) * cp);
+			sumWeightedAreaGrades += (area.getAverage() * cp);
 			sumCP += cp;
 		}
 				
@@ -76,7 +44,7 @@ public class CompleteAreaList extends ArrayList<Area> {
 		
 		for (Exam exam : getExamsOfArea(area)){
 			
-			if (exam.getRating() != Grade.FIVE)
+			if (exam.getRating() != Grade.FIVE && exam.getRating() != Grade.NaN)
 				cp += exam.getCreditpoints();
 		}
 		

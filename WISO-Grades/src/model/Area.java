@@ -24,6 +24,31 @@ public class Area implements Comparable<Area>{
 		this.name = name.substring(i + 1);
 	}
 	
+	
+	public double getAverage(){
+		
+		double sumCP = 0;
+		double sumWeightedGrades = 0;
+		for (Exam exam : exams){
+			Grade grade = exam.getRating();
+			if (grade != Grade.FIVE && grade != Grade.NaN){
+				
+				byte cp = exam.getCreditpoints();
+				sumCP += exam.getCreditpoints();
+				sumWeightedGrades += (cp * grade.getNumericValue());
+			}
+		}
+	
+		if (sumCP != 0)
+			return (Math.floor(
+					Math.round((sumWeightedGrades / sumCP) * 1000)/1000d * 10 ) / 10d );
+		else
+			return 0;
+		
+	}
+	
+	
+	
 	/*
 	 * Overridden for having no multiple entries in sets.
 	 * @see java.lang.Object#equals(java.lang.Object)
