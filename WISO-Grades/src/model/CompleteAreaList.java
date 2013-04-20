@@ -28,7 +28,7 @@ public class CompleteAreaList extends ArrayList<Area> {
 		double sumWeightedGrades = 0;
 		for (Exam exam : getExamsOfArea(area)){
 			Grade grade = exam.getRating();
-			if (grade != Grade.FIVE){
+			if (grade != Grade.FIVE && grade != Grade.NaN){
 				
 				byte cp = exam.getCreditpoints();
 				sumCP += exam.getCreditpoints();
