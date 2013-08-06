@@ -70,13 +70,28 @@ public class ResultFrame extends JFrame {
 		
 		contentPane.setLayout(new GridBagLayout());
 		
+		
+		/*
+		 * GRIDBAGCONSTRAINTS:
+		 * c0 for arealabels and examid
+		 * c1 for examname
+		 * c2 for semester
+		 * c3 for creditpoints
+		 * c4 for examgrades
+		 */
 		int row = 0;
 		Insets spaceRight = new Insets(0, 0, 0, 5);
+		Insets biggerSpaceRight = new Insets(0, 0, 0, 10);
+		Insets biggerSpaceLeftAndRight = new Insets(0, 20, 0, 10);
+		// Insets just for c0
+		Insets c0areaInsets = new Insets(0, 0, 0, 5);
+		Insets c0examIdInsets = new Insets(0, 5, 0, 5); 
+		
 		GridBagConstraints c0 = new GridBagConstraints();
 		c0.gridx = 0;
 		c0.gridy = row;
 		c0.anchor = GridBagConstraints.LINE_START;
-		c0.insets = spaceRight;
+		c0.insets = c0areaInsets;
 		GridBagConstraints c1 = new GridBagConstraints();
 		c1.gridx = 1;
 		c1.gridy = row;
@@ -85,13 +100,13 @@ public class ResultFrame extends JFrame {
 		GridBagConstraints c2 = new GridBagConstraints();
 		c2.gridx = 2;
 		c2.gridy = row;
-		c2.anchor = GridBagConstraints.LINE_START;
-		c2.insets = spaceRight;
+		c2.anchor = GridBagConstraints.LINE_END;
+		c2.insets = biggerSpaceLeftAndRight;
 		GridBagConstraints c3 = new GridBagConstraints();
 		c3.gridx = 3;
 		c3.gridy = row;
 		c3.anchor = GridBagConstraints.LINE_END;
-		c3.insets = new Insets(0, 0, 0, 10);
+		c3.insets = biggerSpaceRight;
 		GridBagConstraints c4 = new GridBagConstraints();
 		c4.gridx = 4;
 		c4.gridy = row;
@@ -106,6 +121,10 @@ public class ResultFrame extends JFrame {
 			c3.gridy = row;
 			c4.gridy = row;
 			
+			
+			// let arealabel be more left than examIDs
+			c0.insets = c0areaInsets;
+			
 			JLabel areaLabel = new JLabel(area.getCompleteName()); 
 			contentPane.add(areaLabel, c0);
 			areaLabels.add(areaLabel);
@@ -118,6 +137,8 @@ public class ResultFrame extends JFrame {
 			c3.gridy = row;
 			c4.gridy = row;
 		
+			// let arealabel be more left than examIDs
+			c0.insets = c0examIdInsets;
 			/**
 			 * Integer to determine whether current exam is the
 			 * first in its area to draw first line grey. 
@@ -131,12 +152,17 @@ public class ResultFrame extends JFrame {
 				JLabel idLabel = new JLabel(String.valueOf(exam.getId()));
 				idLabel.setHorizontalAlignment(JLabel.RIGHT);
 				idLabel.setFont(defaultFont);
-				contentPane.add(idLabel, c1);
+				contentPane.add(idLabel, c0);
 				
 				JLabel nameLabel = new JLabel(exam.getName());
 				nameLabel.setHorizontalAlignment(JLabel.RIGHT);
 				nameLabel.setFont(defaultFont);
-				contentPane.add(nameLabel, c2);
+				contentPane.add(nameLabel, c1);
+				
+				JLabel semesterLabel = new JLabel(exam.getSemester());
+				semesterLabel.setHorizontalAlignment(JLabel.RIGHT);
+				semesterLabel.setFont(defaultFont);
+				contentPane.add(semesterLabel, c2);
 				
 				JLabel cpLabel = new JLabel(String.valueOf(exam.getCreditpoints())
 									.concat(" CP"));
@@ -198,9 +224,9 @@ public class ResultFrame extends JFrame {
 		byte malus = allAreas.getSumMP();
 		JLabel mpLabel = new JLabel("Maluspunkte: " + malus);
 		mpLabel.setForeground(WISOColors.MALUSPOINTSCOLOR);
-		c1.gridy = row;
-		c1.insets = bottomInset;
-		contentPane.add(mpLabel, c1);
+		c0.gridy = row;
+		c0.insets = bottomInset;
+		contentPane.add(mpLabel, c0);
 		
 		/* 
 		 * All areas are processed

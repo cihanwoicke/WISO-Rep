@@ -4,6 +4,7 @@ public class Exam implements Comparable<Exam>{
 
 private final int id;
 	private String name;
+	private String semester;
 	private byte creditpoints = 0;
 	private Grade rating;
 	
@@ -12,6 +13,24 @@ private final int id;
 		this.id = id;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+		
+	}
+
+	public String getSemester(){
+		return semester;
+	}
+	
+	public void setSemester(String semester) {
+		this.semester = semester;
+		
+	}
+
 	public byte getCreditpoints() {
 		return creditpoints;
 	}
@@ -28,17 +47,8 @@ private final int id;
 		this.rating = rating;
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public int getId() {
 		return id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-		
 	}
 
 	@Override

@@ -257,81 +257,101 @@ public class HTMLConnector implements Runnable{
 			allAreas.add(new Area(element.text()));
 		}
 		
+		/**
+		 * Dont show to many errors, and dont annoy user
+		 */
+		int nonCiritcalErrorCount = 0;
+		int maxNonCriticalErrors = 3;
+		
 		// Now tables(-entries) == exams
-		
-		for (int i = 0; i < gradeTables[1].size(); i++){
-			Element singleGradeTable = gradeTables[1].get(i);
-			Elements tableDataList = singleGradeTable.select("td");
-			
-			Area currentArea = allAreas.get(i);
-			
-			for (int j = 0; j < tableDataList.size() ; j += 4){
+		try{
+			for (int i = 0; i < gradeTables[1].size(); i++){
+				Element singleGradeTable = gradeTables[1].get(i);
+				Elements tableDataList = singleGradeTable.select("td");
 				
+				Area currentArea = allAreas.get(i);
 				
-				/*
-				 * Set examID
-				 */
-				int examID = -1;
-				try{
-					examID = Integer.parseInt(tableDataList.get(j).text());
-				} catch (NumberFormatException e){
-					e.printStackTrace();
-					errorhandler.showError
-						("Es gibt ein Problem beim Auslesen der VeranstaltungsId");
-					continue;
-				}
-				Exam exam = new Exam(examID);
-				
-				/*
-				 * Set examName
-				 */
-				Element examName = tableDataList.get(j + 1);
-				exam.setName(examName.text());
-				
-				
-				/*
-				 * Set Creditpoints
-				 */
-				Element creditPoints = tableDataList.get(j + 2);
-				String cpString = creditPoints.text();
-				byte cp = -99;
-				
-				try {
-					cp = Byte.parseByte(cpString);
-				} catch (NumberFormatException e){
-					e.printStackTrace();
-					errorhandler.showError("Es gibt ein Problem beim Auslesen der Creditpoints");
-					continue;
-				}
-				
-				exam.setCreditpoints(cp);
-				
-				/*
-				 * Set archievedGrade
-				 */
-				Element gradeOnSite = tableDataList.get(j + 3);
-				String gradeString = gradeOnSite.text();
-				Grade grade = Grade.NaN;
-				try{
-					float parsedGrade = Float.parseFloat(gradeString.replace(',', '.'));
-					grade = Grade.getGradeByNumericValue(parsedGrade);
+				for (int j = 0; j < tableDataList.size() ; j += 5){
+					// j += 5, because examtable has 5 columns 
 					
-				} catch (NumberFormatException e){
-					grade = Grade.NaN;
-					grade.setStringValue(gradeString);
+					/*
+					 * Set examID
+					 */
+					int examID = -1;
+					try{
+						examID = Integer.parseInt(tableDataList.get(j).text());
+					} catch (NumberFormatException e){
+						e.printStackTrace();
+						if (++nonCiritcalErrorCount <= maxNonCriticalErrors)
+							errorhandler
+									.showError("Es gibt ein Problem beim Auslesen der VeranstaltungsId");
+						continue;
+					}
+					Exam exam = new Exam(examID);
+					
+					/*
+					 * Set examName
+					 */
+					Element examName = tableDataList.get(j + 1);
+					exam.setName(examName.text());
+					
+					/*
+					 * Set semester
+					 */
+					Element semester = tableDataList.get(j + 2);
+					exam.setSemester(semester.text());
+					
+					
+					/*
+					 * Set Creditpoints
+					 */
+					Element creditPoints = tableDataList.get(j + 3);
+					String cpString = creditPoints.text();
+					byte cp = -99;
+					
+					try {
+						cp = Byte.parseByte(cpString);
+					} catch (NumberFormatException e){
+						e.printStackTrace();
+						if (++nonCiritcalErrorCount <= maxNonCriticalErrors)
+							errorhandler
+									.showError("Es gibt ein Problem beim Auslesen der Creditpoints");
+						continue;
+					}
+					
+					exam.setCreditpoints(cp);
+					
+					/*
+					 * Set archievedGrade
+					 */
+					Element gradeOnSite = tableDataList.get(j + 4);
+					String gradeString = gradeOnSite.text();
+					Grade grade = Grade.NaN;
+					try{
+						float parsedGrade = Float.parseFloat(gradeString.replace(',', '.'));
+						grade = Grade.getGradeByNumericValue(parsedGrade);
+						
+					} catch (NumberFormatException e){
+						grade = Grade.NaN;
+						grade.setStringValue(gradeString);
+					}
+					
+					exam.setRating(grade);
+					
+					/*
+					 * Finished Updating exam-object here
+					 */
+					
+					currentArea.addExam(exam);
 				}
-				
-				exam.setRating(grade);
-				
-				/*
-				 * Finished Updating exam-object here
-				 */
-				
-				currentArea.addExam(exam);
+				Collections.sort(currentArea.getAllExams());
 			}
-			Collections.sort(currentArea.getAllExams());
 		}
-		
+		catch(IndexOutOfBoundsException e){
+			errorhandler.showError("Fehler! " +
+					"Anscheinend hat sich die WisoApp geändert, deswegen " +
+					"können die Daten nicht korrekt abgerufen werden.", -2);
+		}
 		Collections.sort(allAreas);
 		
 //		for (Area ar : areas){
