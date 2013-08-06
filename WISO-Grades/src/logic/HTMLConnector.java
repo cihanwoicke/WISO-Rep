@@ -134,9 +134,11 @@ public class HTMLConnector implements Runnable{
 		    Element phpSessID = doc.select("input[name=PHPSESSID]").first();
 		    
 		    if (phpSessID == null){
-		    	errorhandler.showError("Fehler: Konnte SessionID nicht auslesen! " +
+		    	errorhandler.showError("Fehler: Login nicht erfolgreich! " +
 		    			"Bitte geben Sie ihre Daten erneut ein...");
 		    	app.getMainWindow().resetFields();
+		    	System.err.println("Couldnt read Session ID! " +
+		    			"Maybe wrong login data.");
 		    	return false;
 		    }
 		    

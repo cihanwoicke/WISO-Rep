@@ -20,6 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+
 import logic.HTMLConnector;
 import logic.WISOGrades;
 import model.WISOColors;
@@ -32,9 +36,12 @@ import model.WISOColors;
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1307184780911584505L;
-	private final String CMD1 = "loginViaHTTP";
+	private final String loginCommand = "loginViaHTTP";
 	private JTextField nameField;
+	private Document nameDocument;
 	private JPasswordField passwordField;
+	private Document passwordDocument;
+	
 	private String username = "unbekannt";
 	private String password;
 	private JButton button;
@@ -47,7 +54,8 @@ public class MainFrame extends JFrame {
 	private JLabel messageLabel;
 	private String messageText = "Ihre Anfrage wird bearbeitet";
 	
-	private MyListener myListener;
+	private MyKeyListener myKeyListener;
+	private MyDocumentListener myDocumentListener;
 	private WISOGrades app;
 	public MainFrame(WISOGrades app) {
 		this.app = app;
@@ -83,8 +91,10 @@ public class MainFrame extends JFrame {
 		
 		nameField.setColumns(12);
 		nameField.setFont(new Font("default", Font.PLAIN, 11));
-		nameField.addKeyListener((KeyListener) getMyListener());
-		nameField.setActionCommand(CMD1);
+		nameField.addKeyListener((KeyListener) getMyKeyListener());
+		nameField.setActionCommand(loginCommand);
+		nameDocument = nameField.getDocument();
+		nameDocument.addDocumentListener(getMyDocumentListener());
 		
 		JLabel passwordLabel = new JLabel();
 		passwordLabel.setText("Passwort ");
@@ -93,14 +103,17 @@ public class MainFrame extends JFrame {
 		passwordField= new JPasswordField();
 		passwordField.setForeground(WISOColors.DARKGREENTEXT);
 		passwordField.setFont(new Font("default", Font.PLAIN, 11));
-		passwordField.addKeyListener((KeyListener) getMyListener());
+		passwordField.addKeyListener((KeyListener) getMyKeyListener());
 		passwordField.setColumns(14);
-		passwordField.setActionCommand(CMD1);
+		passwordDocument = passwordField.getDocument();
+		passwordDocument.addDocumentListener(getMyDocumentListener());
+		
+		
 		
 		button = new JButton("Noten laden");
-		button.setActionCommand(CMD1);
-		button.addActionListener((ActionListener) getMyListener());
-//		button.setEnabled(false);
+		button.setActionCommand(loginCommand);
+		button.addActionListener((ActionListener) getMyKeyListener());
+		button.setEnabled(false);
 
 		
 		upperPanel.add(infoLabel);
@@ -149,12 +162,17 @@ public class MainFrame extends JFrame {
 		return messagePanel;
 	}
 
-	private MyListener getMyListener() {
-		if (myListener == null)
-			myListener = new MyListener();
-		return myListener;
+	private MyKeyListener getMyKeyListener() {
+		if (myKeyListener == null)
+			myKeyListener = new MyKeyListener();
+		return myKeyListener;
 	}
 	
+	private MyDocumentListener getMyDocumentListener(){
+		if (myDocumentListener == null)
+			myDocumentListener = new MyDocumentListener();
+		return myDocumentListener;
+	}
 
 	private boolean requiredFieldsFilled() {
 		return (!nameField.getText().equals("")
@@ -278,12 +296,12 @@ public class MainFrame extends JFrame {
 	 * @author Cihan Öcal
 	 * <i> 25.02.2013 </i>
 	 */
-	private class MyListener extends KeyAdapter implements ActionListener{
+	private class MyKeyListener extends KeyAdapter implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			String cmd = event.getActionCommand();
-			if (cmd.equals(CMD1) && requiredFieldsFilled()){
+			if (cmd.equals(loginCommand) && requiredFieldsFilled()){
 				startHTTPQuery();
 			}
 			
@@ -296,6 +314,39 @@ public class MainFrame extends JFrame {
 			}
 		}
 		
+	}
+	
+	/**
+	 * Checks whether two Fields are empty or not.
+	 * if both are empty, login-button will be disabled 
+	 * 
+	 * @author Cihan
+	 * <i> 06.08.2013 </i>
+	 */
+	private class MyDocumentListener implements DocumentListener{
+
+		@Override
+		public void changedUpdate(DocumentEvent arg0) {
+			disableOrEnableButton();
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent arg0) {
+			disableOrEnableButton();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent arg0) {
+			disableOrEnableButton();
+		}
+		
+		private void disableOrEnableButton(){
+			if (passwordDocument.getLength() == 0
+					|| nameDocument.getLength() == 0) 
+				button.setEnabled(false);
+			else
+				button.setEnabled(true);
+		}
 	}
 
 	
