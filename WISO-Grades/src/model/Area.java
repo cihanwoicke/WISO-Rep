@@ -1,5 +1,7 @@
 package model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,21 +29,26 @@ public class Area implements Comparable<Area>{
 	
 	public double getAverage(){
 		
-		double sumCP = 0;
-		double sumWeightedGrades = 0;
+		BigDecimal sumCP = BigDecimal.ZERO;
+		BigDecimal sumWeightedGrades = BigDecimal.ZERO;
 		for (Exam exam : exams){
 			Grade grade = exam.getRating();
 			if (grade != Grade.FIVE && grade != Grade.NaN){
 				
-				byte cp = exam.getCreditpoints();
-				sumCP += exam.getCreditpoints();
-				sumWeightedGrades += (cp * grade.getNumericValue());
+				BigDecimal cp = new BigDecimal(exam.getCreditpoints());
+				BigDecimal gradeNumeric = new BigDecimal(grade.getNumericValue());
+				sumCP = sumCP.add(cp);
+				sumWeightedGrades = sumWeightedGrades.add(cp.multiply(gradeNumeric));
 			}
 		}
 	
-		if (sumCP != 0)
-			return (Math.floor(
-					Math.round((sumWeightedGrades / sumCP) * 1000)/1000d * 10 ) / 10d );
+		if (sumCP != BigDecimal.ZERO){
+			BigDecimal result;
+			
+			result = sumWeightedGrades.divide(sumCP, 5, RoundingMode.HALF_UP);
+			result = result.setScale(1, RoundingMode.DOWN);
+			return (result.doubleValue());
+		}
 		else
 			return 0;
 		

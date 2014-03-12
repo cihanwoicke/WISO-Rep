@@ -51,6 +51,7 @@ public class MainFrame extends JFrame {
 	private JPanel lowerPanel = new JPanel();
 	private JPanel messagePanel; // only shown when fetching data in progress.
 	private boolean finished = true; // indicator whether data fetching is in progress
+	JLabel infoLabel = new JLabel(); // "Login via smail account"
 	private JLabel messageLabel;
 	private String messageText = "Ihre Anfrage wird bearbeitet";
 	
@@ -77,7 +78,6 @@ public class MainFrame extends JFrame {
 		lowerPanel.setBackground(WISOColors.BACKGROUND);
 		
 		
-		JLabel infoLabel = new JLabel();
 		infoLabel.setText("Bitte melden Sie sich mit Ihrem S-Mail-Account an.");
 		infoLabel.setFont(new Font("default", Font.BOLD, 12));
 		
@@ -142,7 +142,7 @@ public class MainFrame extends JFrame {
 	public void showInputFields() {
 		bigPanel.setVisible(true);
 		lowerPanel.setVisible(true);
-		messagePanel.setVisible(false);
+		getMessagePanel().setVisible(false);
 
 	}
 	
@@ -158,6 +158,8 @@ public class MainFrame extends JFrame {
 			messagePanel = new JPanel();
 			messagePanel.setBackground(WISOColors.BACKGROUND);
 			messagePanel.add(messageLabel);
+			messagePanel.setVisible(false);
+			contentPane.add(messagePanel, BorderLayout.CENTER);
 		}
 		return messagePanel;
 	}
@@ -194,7 +196,6 @@ public class MainFrame extends JFrame {
 	public void showProgressMessage() {
 		
 		hideInputFields();
-		contentPane.add(getMessagePanel());
 		getMessagePanel().setVisible(true);
 		
 		/*

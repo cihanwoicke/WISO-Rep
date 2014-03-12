@@ -1,5 +1,7 @@
 package model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,22 +21,26 @@ public class CompleteAreaList extends ArrayList<Area> {
 	
 	public double getAverageOverall(boolean twoFractionalDigits){
 		
-		double accuracy = twoFractionalDigits ? 100 : 10;
-		int cp;
-		int sumCP = 0;
-		double sumWeightedAreaGrades = 0d;
+		int accuracy = twoFractionalDigits ? 2 : 1;
+		BigDecimal cp;
+		BigDecimal sumCP = BigDecimal.ZERO;
+		BigDecimal sumWeightedAreaGrades = BigDecimal.ZERO;
 		
 		for (Area area : this){
 			
 			// else
-			cp = getCpOfArea(area); 
-			sumWeightedAreaGrades += (area.getAverage() * cp);
-			sumCP += cp;
+			cp = new BigDecimal(getCpOfArea(area)); 
+			BigDecimal area_average = new BigDecimal(area.getAverage()); 
+			sumWeightedAreaGrades = sumWeightedAreaGrades.add(area_average.multiply(cp));
+			sumCP = sumCP.add(cp);
 		}
 				
-		if (sumCP != 0){
-			return (Math.floor(
-					Math.round((sumWeightedAreaGrades / sumCP) * 1000)/1000d * accuracy) / accuracy);
+		if (sumCP != BigDecimal.ZERO){
+		
+			BigDecimal result = sumWeightedAreaGrades.divide(sumCP, 6, RoundingMode.HALF_UP);
+			result = result.setScale(accuracy, RoundingMode.DOWN);
+			return result.doubleValue();
+		
 		} else
 			return 0f;
 	}
