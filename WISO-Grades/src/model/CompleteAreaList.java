@@ -29,7 +29,7 @@ public class CompleteAreaList extends ArrayList<Area> {
 		for (Area area : this){
 			
 			// else
-			cp = new BigDecimal(getCpOfArea(area)); 
+			cp = new BigDecimal(area.getSumCpForAverage()); 
 			BigDecimal area_average = new BigDecimal(area.getAverage()); 
 			sumWeightedAreaGrades = sumWeightedAreaGrades.add(area_average.multiply(cp));
 			sumCP = sumCP.add(cp);
@@ -45,18 +45,6 @@ public class CompleteAreaList extends ArrayList<Area> {
 			return 0f;
 	}
 	
-	private short getCpOfArea(Area area){
-		short cp = 0;
-		
-		for (Exam exam : getExamsOfArea(area)){
-			
-			if (exam.getRating() != Grade.FIVE && exam.getRating() != Grade.NaN)
-				cp += exam.getCreditpoints();
-		}
-		
-		return cp;
-	}
-	
 	/**
 	 * 
 	 * @return
@@ -68,7 +56,7 @@ public class CompleteAreaList extends ArrayList<Area> {
 		short sumCP = 0;
 		for (Area area : this){
 			for (Exam exam : area.getAllExams()){
-				if (!exam.getRating().equals(Grade.FIVE)){ 
+				if (exam.getCreditpoints() > 0){ 
 					sumCP += exam.getCreditpoints();
 				}
 			}
@@ -82,7 +70,7 @@ public class CompleteAreaList extends ArrayList<Area> {
 		byte malP = 0;
 		for (Area area : this){
 			for (Exam exam : area.getAllExams()){
-				if (exam.getRating().equals(Grade.FIVE)){ 
+				if (exam.getCreditpoints() < 0){ 
 					malP -= exam.getCreditpoints();
 				}
 			}

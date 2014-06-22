@@ -26,10 +26,28 @@ public class Area implements Comparable<Area>{
 		this.name = name.substring(i + 1);
 	}
 	
+	/**
+	 * Only adds up CP of exams, which are relevant for average.
+	 * => CP of exams which are made in a semester abroad will not be counted 
+	 * @return
+	 * @author Cihan Öcal
+	 * <i> 22.06.2014 </i>
+	 */
+	protected short getSumCpForAverage(){
+		short cp = 0;
+		
+		for (Exam exam : getAllExams()){
+			
+			if (exam.getRating() != Grade.FIVE && exam.getRating() != Grade.NaN)
+				cp += exam.getCreditpoints();
+		}
+		
+		return cp;
+	}
 	
 	public double getAverage(){
 		
-		BigDecimal sumCP = BigDecimal.ZERO;
+		BigDecimal sumCP = new BigDecimal(getSumCpForAverage());
 		BigDecimal sumWeightedGrades = BigDecimal.ZERO;
 		for (Exam exam : exams){
 			Grade grade = exam.getRating();
@@ -37,24 +55,21 @@ public class Area implements Comparable<Area>{
 				
 				BigDecimal cp = new BigDecimal(exam.getCreditpoints());
 				BigDecimal gradeNumeric = new BigDecimal(grade.getNumericValue());
-				sumCP = sumCP.add(cp);
 				sumWeightedGrades = sumWeightedGrades.add(cp.multiply(gradeNumeric));
 			}
 		}
 	
-		if (sumCP != BigDecimal.ZERO){
+		if (!sumCP.equals(BigDecimal.ZERO)){
 			BigDecimal result;
 			
 			result = sumWeightedGrades.divide(sumCP, 5, RoundingMode.HALF_UP);
 			result = result.setScale(1, RoundingMode.DOWN);
 			return (result.doubleValue());
-		}
-		else
+		}else
 			return 0;
 		
 	}
-	
-	
+		
 	
 	/*
 	 * Overridden for having no multiple entries in sets.
